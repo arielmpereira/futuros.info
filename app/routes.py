@@ -1,8 +1,8 @@
 from flask import render_template, redirect, url_for, flash, request
 from app import app
 from flask_login import login_user, logout_user, login_required, current_user
-from app.models import Paginas, Remeras, Users, Cart, Domicilios, Orders, OrderItems
-from .forms import SignupForm, LoginForm, DomicilioForm, ContactoForm
+from app.models import Paginas, Users
+from .forms import SignupForm, LoginForm, ContactoForm
 from urllib.parse import urlparse
 
 
