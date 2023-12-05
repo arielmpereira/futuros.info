@@ -12,8 +12,11 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # La vista de inicio de sesión
 
 # Implementa la lógica para cargar un usuario por su ID
+
+
 @login_manager.user_loader
 def load_user(id):
-   return Users.query.get(int(id))
+    return Users.query.get(int(id))
+
 
 from app import routes
