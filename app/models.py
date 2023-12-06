@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Text, String, BLOB, REAL, Boolean, ForeignKey
+from sqlalchemy import Integer, Text, String, BLOB, REAL, Boolean, ForeignKey, Date
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
@@ -16,7 +16,6 @@ class Paginas(db.Model):
     contenido: Mapped[str] = mapped_column(Text)
 
 
-
 class Users(db.Model, UserMixin):
     __tablename__ = 'users'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -24,7 +23,6 @@ class Users(db.Model, UserMixin):
     email: Mapped[str] = mapped_column(String(256), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-
     def __init__(self, name, email):
         self.name = name
         self.email = email
@@ -50,4 +48,44 @@ class Users(db.Model, UserMixin):
     @staticmethod
     def get_by_email(email):
         return Users.query.filter_by(email=email).first()
+
+
+class Tickets(db.Model):
+    __tablename__ = 'tickets'
+    ticket_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ticket: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    mercado: Mapped[str] = mapped_column(String(80), nullable=False)
+
+
+class ForexDaily(db.Model):
+    __tablename__ = 'forex_daily'
+    forex_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey('tickets.ticket_id'), nullable=False)
+    fecha: Mapped[int] = mapped_column(Date, nullable=False)
+    apertura: Mapped[float] = mapped_column(REAL, nullable=False)
+    maximo: Mapped[float] = mapped_column(REAL, nullable=False)
+    minimo: Mapped[float]= mapped_column(REAL, nullable=False)
+    cierre: Mapped[float] = mapped_column(REAL, nullable=False)
+
+
+class IndicesDaily(db.Model):
+    __tablename__ = 'indices_daily'
+    indices_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey('tickets.ticket_id'), nullable=False)
+    fecha: Mapped[int] = mapped_column(Date, nullable=False)
+    apertura: Mapped[float] = mapped_column(REAL, nullable=False)
+    maximo: Mapped[float] = mapped_column(REAL, nullable=False)
+    minimo: Mapped[float] = mapped_column(REAL, nullable=False)
+    cierre: Mapped[float] = mapped_column(REAL, nullable=False)
+
+
+class ComoditiesDaily(db.Model):
+    __tablename__ = 'comodities_daily'
+    comodities_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey('tickets.ticket_id'), nullable=False)
+    fecha: Mapped[int] = mapped_column(Date, nullable=False)
+    apertura: Mapped[float] = mapped_column(REAL, nullable=False)
+    maximo: Mapped[float] = mapped_column(REAL, nullable=False)
+    minimo: Mapped[float] = mapped_column(REAL, nullable=False)
+    cierre: Mapped[float] = mapped_column(REAL, nullable=False)
 
