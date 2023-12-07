@@ -53,15 +53,18 @@ class Users(db.Model, UserMixin):
 class Tickets(db.Model):
     __tablename__ = 'tickets'
     ticket_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    ticket: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
-    mercado: Mapped[str] = mapped_column(String(80), nullable=False)
+    ticket: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
+    nombre: Mapped[str] = mapped_column(String(20), nullable=False)
+    mercado: Mapped[str] = mapped_column(String(20), nullable=False)
+    ultima_actualizacion: Mapped[str] = mapped_column(String(20), nullable=False)
+    habilitado: Mapped[bool] = mapped_column(Boolean)
 
 
 class ForexDaily(db.Model):
     __tablename__ = 'forex_daily'
     forex_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey('tickets.ticket_id'), nullable=False)
-    fecha: Mapped[int] = mapped_column(Date, nullable=False)
+    fecha: Mapped[str] = mapped_column(String(20), nullable=False)
     apertura: Mapped[float] = mapped_column(REAL, nullable=False)
     maximo: Mapped[float] = mapped_column(REAL, nullable=False)
     minimo: Mapped[float]= mapped_column(REAL, nullable=False)
@@ -72,18 +75,18 @@ class IndicesDaily(db.Model):
     __tablename__ = 'indices_daily'
     indices_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey('tickets.ticket_id'), nullable=False)
-    fecha: Mapped[int] = mapped_column(Date, nullable=False)
+    fecha: Mapped[str] = mapped_column(String(20), nullable=False)
     apertura: Mapped[float] = mapped_column(REAL, nullable=False)
     maximo: Mapped[float] = mapped_column(REAL, nullable=False)
     minimo: Mapped[float] = mapped_column(REAL, nullable=False)
     cierre: Mapped[float] = mapped_column(REAL, nullable=False)
 
 
-class ComoditiesDaily(db.Model):
-    __tablename__ = 'comodities_daily'
+class CommoditiesDaily(db.Model):
+    __tablename__ = 'commodities_daily'
     comodities_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey('tickets.ticket_id'), nullable=False)
-    fecha: Mapped[int] = mapped_column(Date, nullable=False)
+    fecha: Mapped[str] = mapped_column(String(20), nullable=False)
     apertura: Mapped[float] = mapped_column(REAL, nullable=False)
     maximo: Mapped[float] = mapped_column(REAL, nullable=False)
     minimo: Mapped[float] = mapped_column(REAL, nullable=False)

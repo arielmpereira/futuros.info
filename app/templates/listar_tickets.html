@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        <!-- Services-->
+        <section class="page-section" id="services">
+            <div class="container px-12 px-lg-5">
+                <h2 class="text-center mt-0">{{ mercado }}</h2>
+                <ul>
+                    {% for ticket in tickets %}
+                    <li>{{ ticket.nombre }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+{% endblock %}
