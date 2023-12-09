@@ -143,20 +143,20 @@ def mostrar_ticket(ticket_id):
     df=df.bfill()
 
     # Calcular el promedio de las cinco primeras columnas para cada fila
-    df['Promedio_5'] = df.iloc[:, :5].mean(axis=1)
-    df['Promedio_10'] = df.iloc[:, :10].mean(axis=1)
-    df['Promedio_15'] = df.iloc[:, :15].mean(axis=1)
+    df['Promedio_5_años'] = df.iloc[:, :5].mean(axis=1)
+    df['Promedio_10_años'] = df.iloc[:, :10].mean(axis=1)
+    df['Promedio_15_años'] = df.iloc[:, :15].mean(axis=1)
 
 
     # Crea un gráfico de líneas para los ultimos 5 años
     columnas = [anio-4, anio-3, anio-2, anio-1, anio]
-    fig1 = px.line(df,  y=columnas, title='Grafico de los últimos 5 años')
+    fig1 = px.line(df,  y=columnas, title='Cotizaciones de los últimos 5 años')
     fig1.update_layout(height=800)
     grafico_5anios = pio.to_html(fig1, full_html=False)
 
     # Crea un grafico de lineas para los 3 promedios
-    columnas2 = ['Promedio_5', 'Promedio_10', 'Promedio_15']
-    fig2 = px.line(df, y=columnas2, title='Grafico de promedios')
+    columnas2 = ['Promedio_5_años', 'Promedio_10_años', 'Promedio_15_años']
+    fig2 = px.line(df, y=columnas2, title='Promedios anuales')
     fig2.update_layout(height=800)
     grafico_promedios = pio.to_html(fig2, full_html=False)
 
@@ -214,7 +214,7 @@ def actualizar_tabla(ticket_id, df, mercado):
     elif mercado == 'indices':
         tabla = IndicesDaily
     else:
-        tabla = ComoditiesDaily
+        tabla = CommoditiesDaily
 
     # Insertar nuevos registros
     for index, row in df.iterrows():
