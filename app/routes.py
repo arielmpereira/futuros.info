@@ -8,9 +8,16 @@ from urllib.parse import urlparse
 from datetime import datetime, timedelta
 import yfinance as yf
 import pandas as pd
+import numpy as np
 
 import plotly.express as px
 import plotly.io as pio
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+from statsmodels.tsa.seasonal import seasonal_decompose
+import matplotlib.pyplot as plt
+
 
 @app.route('/')
 def home():
@@ -79,13 +86,83 @@ def listar_tickets(mercado):
     tickets = Tickets.query.filter_by(mercado=mercado).all()
     return render_template('listar_tickets.html', tickets=tickets, mercado=mercado)
 
+def tabla_diaria(mercado):
+    if mercado == 'forex':
+        return ForexDaily
+    elif mercado == 'indices':
+        return IndicesDaily
+    else:
+        return CommoditiesDaily
+
+
 @app.route('/activo-<int:ticket_id>')
 def mostrar_ticket(ticket_id):
+    # Obtenemos los detalles del activo específico desde la base de datos
     ticket = Tickets.query.get_or_404(ticket_id)
 
-    # Crear un gráfico de línea utilizando Plotly Express
-    fig = px.line(x=ticket. .fecha, y=activo.precio, labels={'x': 'Fecha', 'y': 'Precio'},
-                  title=f'Gráfico de Línea para {activo.nombre}')
+    # Obtenemos la tabla diaria correspondiente según el mercado
+    tabla = tabla_diaria(ticket.mercado)
+
+    # Obtener el año actual
+    anio = datetime.now().year
+
+    # Crea el DataFrame con NaN en las columnas correspondientes a los años
+    fechas = pd.date_range(start=datetime(anio, 1, 1), end=datetime(anio, 12, 31))
+    columnas = [anio-14, anio-13, anio-12, anio-11, anio-10, anio-9, anio-8, anio-7, anio-6, anio-5, anio-4, anio-3, anio-2, anio-1, anio]
+    df = pd.DataFrame(index=fechas, columns=columnas)
+    df.index.name = 'Fecha'
+
+    # Obtener datos desde el 1 de enero de 2018 hasta la fecha actual
+    datos = (
+        tabla.query.filter_by(ticket_id=ticket_id)
+        .filter(tabla.fecha >= datetime(anio-14, 1, 1))
+        .order_by(tabla.fecha)
+        .all()
+    )
+
+    # Llenar el DataFrame con los datos de la consulta
+    for row in datos:
+        fecha = pd.to_datetime(row.fecha)
+        cierre = row.cierre
+
+        anio_fecha = fecha.year
+        # Crear una nueva fecha con el año actual, mismo mes y mismo día
+        try:
+            fecha = pd.Timestamp(datetime(anio, fecha.month, fecha.day))
+        except ValueError:
+            # En caso de error (por ejemplo, si intentamos asignar el 29 de febrero en un año no bisiesto)
+            # simplemente omitir este dato
+            continue
+
+        # Verificar si la fecha es válida antes de asignar el valor
+        if pd.to_datetime(fecha, errors='coerce') in df.index:
+            # Asignar el valor de 'Cierre' en la columna correspondiente
+            df.loc[fecha, anio_fecha] = cierre
+
+    # Rellenar NaN con el valor del día anterior después del relleno hacia atras
+    df=df.bfill()
+
+    # Calcular el promedio de las cinco primeras columnas para cada fila
+    df['Promedio_5'] = df.iloc[:, :5].mean(axis=1)
+    df['Promedio_10'] = df.iloc[:, :10].mean(axis=1)
+    df['Promedio_15'] = df.iloc[:, :15].mean(axis=1)
+
+
+    # Crea un gráfico de líneas para los ultimos 5 años
+    columnas = [anio-4, anio-3, anio-2, anio-1, anio]
+    fig1 = px.line(df,  y=columnas, title='Grafico de los últimos 5 años')
+    fig1.update_layout(height=800)
+    grafico_5anios = pio.to_html(fig1, full_html=False)
+
+    # Crea un grafico de lineas para los 3 promedios
+    columnas2 = ['Promedio_5', 'Promedio_10', 'Promedio_15']
+    fig2 = px.line(df, y=columnas2, title='Grafico de promedios')
+    fig2.update_layout(height=800)
+    grafico_promedios = pio.to_html(fig2, full_html=False)
+
+
+    return render_template('detalle_activo.html', ticket=ticket, grafico_5anios=grafico_5anios, grafico_promedios=grafico_promedios)
+
 
 @app.route('/actualizar_datos')
 def actualizar_datos():

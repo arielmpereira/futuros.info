@@ -7,7 +7,7 @@
                 <h2 class="text-center mt-0">{{ mercado }}</h2>
                 <ul>
                     {% for ticket in tickets %}
-                    <li>{{ ticket.nombre }}</li>
+                    <li><a href="/activo-{{ticket.ticket_id}}">{{ ticket.nombre }}</a></li>
                     {% endfor %}
                 </ul>
             </div>

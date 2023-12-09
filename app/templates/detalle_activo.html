@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        <!-- Services-->
+        <section class="page-section" id="services">
+            <div class="container px-12 px-lg-5">
+                <h2 class="text-center mt-0">{{ ticket.nombre }}</h2>
+                <div>
+                    <!-- Mostrar la imagen del gráfico -->
+                    {{ grafico_5anios|safe }}
+                </div>
+                <div>
+                    <!-- Mostrar la imagen del gráfico -->
+                    {{ grafico_promedios|safe }}
+                </div>
+                <p>Ultima actualización: {{ ticket.ultima_actualizacion }}</p>
+            </div>
+        </section>
+{% endblock %}
