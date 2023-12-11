@@ -1,12 +1,5 @@
 ---
-title: |
-  []{#_5076wtmsncw8
-  .anchor}![](media/image2.png){width="5.307292213473316in"
-  height="0.9256900699912511in"}
-
-  []{#_6s8670gmasyk .anchor}
-
-  []{#_nnewnpxb7dau .anchor}Práctica profesionalizante
+Práctica profesionalizante
 ---
 
 # TECNICATURA UNIVERSITARIA EN PROGRAMACIÓN
